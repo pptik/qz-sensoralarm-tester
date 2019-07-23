@@ -1,0 +1,28 @@
+{
+  "name": "PendeteksiGempa",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "gps": "node src/gps/gps.js",
+    "start": "node src/deteksi_gempa/deteksi_gempa.js",
+    "led": "node src/gpio_led/led.js",
+    "audio": "node src/play_audio/play_audio.js",
+    "compass": "node src/QMC5883L/qmc5883l.js",
+    "altimeter": "node src/BMP280/bmp280.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "async": "*",
+    "bmp280-sensor": "^0.1.3",
+    "express": "^4.17.1",
+    "i2c-bus": "^4.0.10",
+    "node-gpsd": "^0.3.0",
+    "nodejs-qmc5883l": "^1.2.0",
+    "onoff": "^4.1.3",
+    "play-sound": "^1.1.3",
+    "socket.io": "^2.2.0"
+  }
+}

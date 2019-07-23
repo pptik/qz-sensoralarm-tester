@@ -1,0 +1,7 @@
+node_modules
+*.log
+*.lock
+test.js
+deteksi_gempa_raw.js
+index_raw.html
+raw_imu.js

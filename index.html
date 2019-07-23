@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>IMU Plot</title>
+        <meta charset="utf-8">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    </head>
+    <body>
+        <div class="h-100 d-flex justify-content-center align-items-center">
+            <span class="accel-container" style="height:50vh !important; width:30vw !important;">
+                <canvas id="accelChart"></canvas>
+                <div class="gempa-container" style="height:50vh !important; width:60vw !important;">
+                    <canvas id="deteksiGempa"></canvas>
+                </div>
+            </span>
+            <span class="gyro-container" style="height:50vh !important; width:30vw !important;">
+                <canvas id="gyroChart"></canvas>
+            </span>
+        </div>
+        <script>
+            var socket = io.connect();
+
+            var dataGempa = {
+                labels: [],
+                datasets: [
+                    {
+                        fill: false,
+                        label: "Getaran",
+                        borderColor: "rgba(255,0,255,0.5)",
+                        pointBorderColor: "rgba(255,0,255,1)",
+                        data: []
+                    },
+                    {
+                        fill: false,
+                        label: "Trigger",
+                        borderColor: "rgba(255,255,0,0.5)",
+                        pointBorderColor: "rgba(255,255,0,1)",
+                        data: []
+                    }
+                ]
+            };
+
+            var dataAccel = {
+                labels: [],
+                datasets: [
+                    {
+                        fill: false,
+                        label: "Accel X",
+                        borderColor: "rgba(255,0,0,0.5)",
+                        pointBorderColor: "rgba(255,0,0,1)",
+                        data: []
+                    },
+                    {
+                        fill: false,
+                        label: "Accel Y",
+                        borderColor: "rgba(0,255,0,0.5)",
+                        pointBorderColor: "rgba(0,255,0,1)",
+                        data: []
+                    },
+                    {
+                        fill: false,
+                        label: "Accel Z",
+                        borderColor: "rgba(0,0,255,0.5)",
+                        pointBorderColor: "rgba(0,0,255,1)",
+                        data: []
+                    }
+                ]
+            };
+
+            var dataGyro = {
+                labels: [],
+                datasets: [
+                    {
+                        fill: false,
+                        label: "Gyro X",
+                        borderColor: "rgba(255,0,0,0.5)",
+                        pointBorderColor: "rgba(255,0,0,1)",
+                        data: []
+                    },
+                    {
+                        fill: false,
+                        label: "Gyro Y",
+                        borderColor: "rgba(0,255,0,0.5)",
+                        pointBorderColor: "rgba(0,255,0,1)",
+                        data: []
+                    },
+                    {
+                        fill: false,
+                        label: "Gyro Z",
+                        borderColor: "rgba(0,0,255,0.5)",
+                        pointBorderColor: "rgba(0,0,255,1)",
+                        data: []
+                    }
+                ]
+            };
+            
+            socket.on('data', function(response) {
+                // console.log(response);
+                dataAccel.datasets[0].data = response.data.accel_x;
+                dataAccel.datasets[1].data = response.data.accel_y;
+                dataAccel.datasets[2].data = response.data.accel_z;
+                dataAccel.labels = response.labels
+                dataGyro.datasets[0].data = response.data.roll;
+                dataGyro.datasets[1].data = response.data.pitch;
+                dataGyro.datasets[2].data = response.data.yaw;
+                dataGyro.labels = response.labels
+                dataGempa.datasets[0].data = response.data.getaran;
+                dataGempa.datasets[1].data = Array(50).fill(response.data.trigger);
+                dataGempa.labels = response.labels
+                gempaPlot.update();
+                accelPlot.update();
+                gyroPlot.update();
+            })
+
+            var detGempa = document.getElementById("deteksiGempa").getContext("2d");
+            var gempaPlot = new Chart(detGempa, {
+                type: "line",
+                data: dataGempa,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    scales: {
+                        yAxes: [{
+                            display: true,
+                            ticks: {
+                                suggestedMin: 0,
+                                max: 20,
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+            var accelctx = document.getElementById("accelChart").getContext("2d");
+            var accelPlot = new Chart(accelctx, {
+                type: "line",
+                data: dataAccel,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    scales: {
+                        yAxes: [{
+                            display: true,
+                            ticks: {
+                                suggestedMin: -10,
+                                max: 10,
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+            var gyroctx = document.getElementById("gyroChart").getContext("2d");
+            var gyroPlot = new Chart(gyroctx, {
+                type: "line",
+                data: dataGyro,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    scales: {
+                        yAxes: [{
+                            display: true,
+                            ticks: {
+                                suggestedMin: -360,
+                                max: 360,
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+        </script>
+    </body>
+</html>
