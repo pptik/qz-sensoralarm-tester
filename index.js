@@ -11,24 +11,29 @@ var LED2 = new Gpio(27, 'out');
 var LED3 = new Gpio(22, 'out')
 LED2.writeSync(1);
 
-const imu = require(__dirname + '/../IMU/imu.js');
+const imu = require(__dirname + '/src/IMU/imu.js');
 const IMU = new imu();
 
 server.listen(process.env.PORT || 1337);
 console.log('Server running at http://127.0.0.1:1337/');
 
 app.get('/', function(req, res) {
-    res.sendFile(path.resolve(__dirname + '/../../index.html'));
+    res.sendFile(path.resolve(__dirname + '/index.html'));
 });
 
 var accel_x = [];
 var accel_y = [];
-var accel_z = [];  
+var accel_z = [];
+var magneto_x = [];
+var magneto_y = [];
+var magneto_z = [];
 var roll = [];
 var pitch = [];
 var yaw = [];
 var getaran = 0;
 var getaranArray = [];
+var altitude = 0;
+var altitudeArray = [];
 var dataIndex = [];
 var count = 0;
 var ledBlinking = false;
@@ -37,15 +42,20 @@ var ledBlinking = false;
 const trigger = 10;
 
 function deteksiGempa() {
-    IMU.readAll()
+    IMU.readAll(qmc5883l_raw=true)
     .then(function(imuData) {
+        // console.log(imuData);
         count++;
         accel_x.push(imuData.accel_x)
         accel_y.push(imuData.accel_y)
         accel_z.push(imuData.accel_z)
+        magneto_x.push(imuData.magneto_x)
+        magneto_y.push(imuData.magneto_y)
+        magneto_z.push(imuData.magneto_z)
         roll.push(imuData.roll)
         pitch.push(imuData.pitch)
         yaw.push(imuData.yaw)
+        altitude = imuData.height;
 
         if (imuData.accel_x > 2.5 || imuData.accel_x < -2.5) {
             getaran++;
@@ -55,7 +65,7 @@ function deteksiGempa() {
         }
 
         if (getaran >= trigger) {
-            player.play(__dirname + '/../play_audio/media/alarm.mp3', function(err){
+            player.play(__dirname + '/src/play_audio/media/alarm.mp3', function(err){
                 if (err) return;
             });
 
@@ -100,15 +110,20 @@ function deteksiGempa() {
         }
 
         getaranArray.push(getaran);
+        altitudeArray.push(altitude)
 
         if (accel_x.length > 50) {
             accel_x = accel_x.slice(1, accel_x.length);
             accel_y = accel_y.slice(1, accel_y.length);
             accel_z = accel_z.slice(1, accel_z.length);
+            magneto_x = magneto_x.slice(1, magneto_x.length);
+            magneto_y = magneto_y.slice(1, magneto_y.length);
+            magneto_z = magneto_z.slice(1, magneto_z.length);
             roll = roll.slice(1, roll.length);
             pitch = pitch.slice(1, pitch.length);
             yaw = yaw.slice(1, yaw.length);
             getaranArray = getaranArray.slice(1, getaranArray.length);
+            altitudeArray = altitudeArray.slice(1, altitudeArray.length);
         }
         else {
             dataIndex.push(accel_x.length);
@@ -120,9 +135,13 @@ function deteksiGempa() {
                 accel_x: accel_x,
                 accel_y: accel_y,
                 accel_z: accel_z,
+                magneto_x: magneto_x,
+                magneto_y: magneto_y,
+                magneto_z: magneto_z,
                 roll: roll,
                 pitch: pitch,
                 yaw: yaw,
+                altitude: altitudeArray,
                 getaran: getaranArray,
                 trigger: trigger
             } 

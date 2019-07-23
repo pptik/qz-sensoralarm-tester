@@ -14,6 +14,12 @@
                 <div class="gempa-container" style="height:50vh !important; width:60vw !important;">
                     <canvas id="deteksiGempa"></canvas>
                 </div>
+                <div class="altimeter-container" style="height:50vh !important; width:60vw !important;">
+                    <canvas id="altimeter"></canvas>
+                </div>
+                <div class="magnetometer-container" style="height:50vh !important; width:60vw !important;">
+                    <canvas id="magnetometer"></canvas>
+                </div>
             </span>
             <span class="gyro-container" style="height:50vh !important; width:30vw !important;">
                 <canvas id="gyroChart"></canvas>
@@ -21,26 +27,6 @@
         </div>
         <script>
             var socket = io.connect();
-
-            var dataGempa = {
-                labels: [],
-                datasets: [
-                    {
-                        fill: false,
-                        label: "Getaran",
-                        borderColor: "rgba(255,0,255,0.5)",
-                        pointBorderColor: "rgba(255,0,255,1)",
-                        data: []
-                    },
-                    {
-                        fill: false,
-                        label: "Trigger",
-                        borderColor: "rgba(255,255,0,0.5)",
-                        pointBorderColor: "rgba(255,255,0,1)",
-                        data: []
-                    }
-                ]
-            };
 
             var dataAccel = {
                 labels: [],
@@ -96,6 +82,66 @@
                 ]
             };
             
+            var dataGempa = {
+                labels: [],
+                datasets: [
+                    {
+                        fill: false,
+                        label: "Getaran",
+                        borderColor: "rgba(255,0,255,0.5)",
+                        pointBorderColor: "rgba(255,0,255,1)",
+                        data: []
+                    },
+                    {
+                        fill: false,
+                        label: "Trigger",
+                        borderColor: "rgba(255,255,0,0.5)",
+                        pointBorderColor: "rgba(255,255,0,1)",
+                        data: []
+                    }
+                ]
+            };
+
+            var dataAltimeter = {
+                labels: [],
+                datasets: [
+                    {
+                        fill: false,
+                        label: "Altitude Meter",
+                        borderColor: "rgba(0,0,0,0.5)",
+                        pointBorderColor: "rgba(0,0,0,1)",
+                        data: []
+                    }
+                ]
+            };
+
+            var dataMagnetometer = {
+                labels: [],
+                datasets: [
+                    {
+                        fill: false,
+                        label: "Magnetometer X",
+                        borderColor: "rgba(255,0,0,0.5)",
+                        pointBorderColor: "rgba(255,0,0,1)",
+                        data: []
+                    },
+                    {
+                        fill: false,
+                        label: "Magnetometer Y",
+                        borderColor: "rgba(0,255,0,0.5)",
+                        pointBorderColor: "rgba(0,255,0,1)",
+                        data: []
+                    },
+                    {
+                        fill: false,
+                        label: "Magnetometer Z",
+                        borderColor: "rgba(0,0,255,0.5)",
+                        pointBorderColor: "rgba(0,0,255,1)",
+                        data: []
+                    }
+                ]
+            };
+
             socket.on('data', function(response) {
                 // console.log(response);
                 dataAccel.datasets[0].data = response.data.accel_x;
@@ -109,31 +155,18 @@
                 dataGempa.datasets[0].data = response.data.getaran;
                 dataGempa.datasets[1].data = Array(50).fill(response.data.trigger);
                 dataGempa.labels = response.labels
+                dataAltimeter.datasets[0].data = response.data.altitude;
+                dataAltimeter.labels = response.labels
+                dataMagnetometer.datasets[0].data = response.data.magneto_x;
+                dataMagnetometer.datasets[1].data = response.data.magneto_y;
+                dataMagnetometer.datasets[2].data = response.data.magneto_z;
+                dataMagnetometer.labels = response.labels
                 gempaPlot.update();
                 accelPlot.update();
                 gyroPlot.update();
+                altimeterPlot.update();
+                magnetoPlot.update();
             })
-
-            var detGempa = document.getElementById("deteksiGempa").getContext("2d");
-            var gempaPlot = new Chart(detGempa, {
-                type: "line",
-                data: dataGempa,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: false,
-                    scales: {
-                        yAxes: [{
-                            display: true,
-                            ticks: {
-                                suggestedMin: 0,
-                                max: 20,
-                                beginAtZero: true
-                            }
-                        }]
-                    }
-                }
-            });
 
             var accelctx = document.getElementById("accelChart").getContext("2d");
             var accelPlot = new Chart(accelctx, {
@@ -170,6 +203,69 @@
                             ticks: {
                                 suggestedMin: -360,
                                 max: 360,
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+            var detGempa = document.getElementById("deteksiGempa").getContext("2d");
+            var gempaPlot = new Chart(detGempa, {
+                type: "line",
+                data: dataGempa,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    scales: {
+                        yAxes: [{
+                            display: true,
+                            ticks: {
+                                suggestedMin: 0,
+                                max: 20,
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+            var altimeterctx = document.getElementById("altimeter").getContext("2d");
+            var altimeterPlot = new Chart(altimeterctx, {
+                type: "line",
+                data: dataAltimeter,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    scales: {
+                        yAxes: [{
+                            display: true,
+                            ticks: {
+                                suggestedMin: 0,
+                                max: 4000,
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+            var magnetoctx = document.getElementById("magnetometer").getContext("2d");
+            var magnetoPlot = new Chart(magnetoctx, {
+                type: "line",
+                data: dataMagnetometer,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    scales: {
+                        yAxes: [{
+                            display: true,
+                            ticks: {
+                                suggestedMin: -4000,
+                                max: 4000,
                                 beginAtZero: true
                             }
                         }]

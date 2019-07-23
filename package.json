@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "gps": "node src/gps/gps.js",
-    "start": "node src/deteksi_gempa/deteksi_gempa.js",
+    "start": "node index.js",
     "led": "node src/gpio_led/led.js",
     "audio": "node src/play_audio/play_audio.js",
     "compass": "node src/QMC5883L/qmc5883l.js",
@@ -13,7 +13,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "MIT",
+  "license": "Apache License",
   "dependencies": {
     "async": "*",
     "bmp280-sensor": "^0.1.3",
