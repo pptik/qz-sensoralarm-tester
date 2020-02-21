@@ -1,5 +1,5 @@
 var amqp = require('amqplib/callback_api');
-var amqpURL = "amqp://:@cat.rmq.cloudamqp.com/";
+var amqpURL = `amqp://${process.env.AMQP_USERNAME}:${process.env.AMQP_PASSWORD}@${process.env.AMQP_HOSTNAME}/${process.env.AMQP_VHOST}`;
 
 var player = require('play-sound')(opts = {})
 var Gpio = require('onoff').Gpio;
@@ -29,12 +29,12 @@ var resetBlink = false;
 function startAmqp() {
     connection = amqp.connect({
         protocol: 'amqp',
-        hostname: 'cat.rmq.cloudamqp.com',
+        hostname: process.env.AMQP_HOSTNAME,
         port: 5672,
-        username: '',
-        password: '',
+        username: process.env.AMQP_USERNAME,
+        password: process.env.AMQP_PASSWORD,
         heartbeat: 5,
-        vhost: ''
+        vhost: process.env.AMQP_VHOST
     }, function(err, conn) {
         if (!err) { 
             ifError = false;

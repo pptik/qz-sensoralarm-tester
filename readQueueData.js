@@ -1,5 +1,5 @@
 var amqp = require('amqplib/callback_api');
-var amqpURL = "amqp://:@cat.rmq.cloudamqp.com/";
+var amqpURL = `amqp://${process.env.AMQP_USERNAME}:${process.env.AMQP_PASSWORD}@${process.env.AMQP_HOSTNAME}/${process.env.AMQP_VHOST}`;
 
 amqp.connect(amqpURL, function(err, conn) {
     conn.createChannel(function(err, ch) {
