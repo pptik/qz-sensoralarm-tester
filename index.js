@@ -1,20 +1,21 @@
-var amqp = require('amqplib/callback_api');
-var amqpURL = `amqp://${process.env.AMQP_USERNAME}:${process.env.AMQP_PASSWORD}@${process.env.AMQP_HOSTNAME}/${process.env.AMQP_VHOST}`;
+require('dotenv').config();
+const amqp = require('amqplib/callback_api');
+const amqpURL = `amqp://${process.env.AMQP_USERNAME}:${process.env.AMQP_PASSWORD}@${process.env.AMQP_HOSTNAME}/${process.env.AMQP_VHOST}`;
 
-var player = require('play-sound')(opts = {})
-var Gpio = require('onoff').Gpio;
-var express = require('express');
-var app = express()
-var server = require('http').createServer(app);
-var path = require('path');
+const player = require('play-sound')(opts = {});
+const Gpio = require('onoff').Gpio;
+const express = require('express');
+const app = express();
+const server = require('http').createServer(app);
+const path = require('path');
 const io = require('socket.io').listen(server);
 
 const imu = require(__dirname + '/src/IMU/imu.js');
 const IMU = new imu();
 
-var LED1 = new Gpio(17, 'out');
-var LED2 = new Gpio(27, 'out');
-var LED3 = new Gpio(22, 'out')
+const LED1 = new Gpio(17, 'out');
+const LED2 = new Gpio(27, 'out');
+const LED3 = new Gpio(22, 'out')
 
 var ifError = false;
 var connection;
@@ -36,7 +37,7 @@ function startAmqp() {
         heartbeat: 5,
         vhost: process.env.AMQP_VHOST
     }, function(err, conn) {
-        if (!err) { 
+        if (!err) {
             ifError = false;
             clearInterval(errorBlinkInterval);
             LED2.writeSync(1);
@@ -44,7 +45,7 @@ function startAmqp() {
 
             var alarmGempa = undefined;
             var alarmTsunami = undefined;
-            
+
             var playAlarmGempa = false;
             var playAlarmTsunami = false;
             var accel_x = [];
