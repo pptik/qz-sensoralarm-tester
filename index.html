@@ -87,6 +87,7 @@
                 datasets: [
                     {
                         fill: false,
+                        // label: "Skala Richter",
                         label: "Getaran",
                         borderColor: "rgba(255,0,255,0.5)",
                         pointBorderColor: "rgba(255,0,255,1)",
@@ -94,9 +95,16 @@
                     },
                     {
                         fill: false,
-                        label: "Trigger",
+                        label: "Trigger Gempa",
                         borderColor: "rgba(255,255,0,0.5)",
                         pointBorderColor: "rgba(255,255,0,1)",
+                        data: []
+                    },
+                    {
+                        fill: false,
+                        label: "Trigger Tsunami",
+                        borderColor: "rgba(0,255,255,0.5)",
+                        pointBorderColor: "rgba(0,255,255,1)",
                         data: []
                     }
                 ]
@@ -152,8 +160,10 @@
                 dataGyro.datasets[1].data = response.data.pitch;
                 dataGyro.datasets[2].data = response.data.yaw;
                 dataGyro.labels = response.labels
+                // dataGempa.datasets[0].data = response.data.sr;
                 dataGempa.datasets[0].data = response.data.getaran;
-                dataGempa.datasets[1].data = Array(50).fill(response.data.trigger);
+                dataGempa.datasets[1].data = Array(50).fill(response.data.triggerGempa);
+                dataGempa.datasets[2].data = Array(50).fill(response.data.triggerTsunami);
                 dataGempa.labels = response.labels
                 dataAltimeter.datasets[0].data = response.data.altitude;
                 dataAltimeter.labels = response.labels
