@@ -1,0 +1,13 @@
+[Unit]
+Description=My Script Service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi
+ExecStart=/home/pi/deteksi_gempa.sh
+
+[Install]
+WantedBy=multi-user.target

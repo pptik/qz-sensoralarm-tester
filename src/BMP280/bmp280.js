@@ -1,4 +1,4 @@
-const BMP280 = require('bmp280-sensor');
+const BMP280 = require('./bmp280-sensor');
 const options = {
   i2cBusNumber  : 1,    // defaults to 1
   i2cAddress    : 0x77, // defaults to 0x76
