@@ -10,7 +10,7 @@ const server = require('http').createServer(app);
 const path = require('path');
 const io = require('socket.io').listen(server);
 
-const imu = require(__dirname + '/src/IMU/imu.js');
+const imu = require('./src/IMU/imu.js');
 const IMU = new imu();
 
 const LED1 = new Gpio(17, 'out');
