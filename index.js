@@ -1,15 +1,15 @@
-var amqp = require('amqplib/callback_api');
-var amqpURL = `amqp://${process.env.AMQP_USERNAME}:${process.env.AMQP_PASSWORD}@${process.env.AMQP_HOSTNAME}/${process.env.AMQP_VHOST}`;
+const amqp = require('amqplib/callback_api');
+const amqpURL = `amqp://${process.env.AMQP_USERNAME}:${process.env.AMQP_PASSWORD}@${process.env.AMQP_HOSTNAME}/${process.env.AMQP_VHOST}`;
 
-var player = require('play-sound')(opts = {})
-var Gpio = require('onoff').Gpio;
-var express = require('express');
-var app = express()
-var server = require('http').createServer(app);
-var path = require('path');
+const player = require('play-sound')(opts = {})
+const Gpio = require('onoff').Gpio;
+const express = require('express');
+const app = express();
+const server = require('http').createServer(app);
+const path = require('path');
 const io = require('socket.io').listen(server);
 
-const imu = require(__dirname + '/src/IMU/imu.js');
+const imu = require('./src/IMU/imu.js');
 const IMU = new imu();
 
 var LED1 = new Gpio(17, 'out');
@@ -292,7 +292,7 @@ function startAmqp() {
 setTimeout(startAmqp, 1000);
 
 app.get('/', function(req, res) {
-    res.sendFile(path.resolve(__dirname + '/index.html'));
+    res.sendFile('./index.html');
 });
 
 server.listen(process.env.PORT || 1337);
